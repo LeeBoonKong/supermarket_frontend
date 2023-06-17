@@ -16,12 +16,12 @@ export const ProductRepository = {
         var res = await fetch('https://dummyjson.com/products/categories')
         return await res.json();
     },
-    search: (keyword) => {
-        const params = URLSearchParams({
+    search: async (keyword) => {
+        const params = new URLSearchParams({
             q: keyword,
         });
 
-        fetch('https://dummyjson.com/products/search?' + params.toString())
-            .then(res => res.json())
+        var res = await fetch('https://dummyjson.com/products/search?' + params.toString())
+        return await res.json();
     }
 }

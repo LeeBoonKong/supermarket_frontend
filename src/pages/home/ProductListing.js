@@ -5,10 +5,13 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { CardActionArea, Grid, List, ListItem, ListItemButton, ListItemText, Modal, Rating } from "@mui/material";
+import { CardActionArea, Container, Fab, Grid, List, ListItem, ListItemButton, ListItemText, Modal, Rating, Snackbar } from "@mui/material";
 import { Box } from "@mui/system";
 import TouchRipple from "@mui/material/ButtonBase/TouchRipple";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Add, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import SearchBar from "../../sharedComponents/SearchBar";
 
 const style = {
     position: 'absolute',
@@ -25,17 +28,40 @@ const style = {
 
 function ProductListing() {
     var productStore = useProductStore();
+    var navigate = useNavigate();
 
     var [modalOpen, setModalOpen] = useState(false);
+    var [snackBarOpen, setSnackbarOpen] = useState(false);
 
     var toggleModal = () => {
         setModalOpen(!modalOpen);
-        console.log(productStore.categories);
+    }
+
+    var openDetails = (item) => {
+        navigate('/details', { state: item });
+    }
+
+    var onLeftclick = () => {
+        if (productStore.currentPage > 0) {
+            productStore.getProducts(10, productStore.currentPage - 1);
+        } else {
+            setSnackbarOpen(true);
+        }
+    }
+
+    var onRightclick = () => {
+        if (productStore.currentPage < (productStore.total - 10) / 10) {
+            productStore.getProducts(10, productStore.currentPage + 1);
+        } else {
+            setSnackbarOpen(true);
+        }
     }
 
     return (
         <div>
-            <Box sx={{ flexGrow: 1, marginTop: 1 }}>
+            <Typography variant="h5" textAlign="center">BuyBuyBuy</Typography>
+            <SearchBar />
+            <Box>
                 <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 1 }}>
                     <Button variant="text" onClick={toggleModal} sx={{ alignSelf: "right" }}>Categories</Button>
                 </Box>
@@ -44,9 +70,9 @@ function ProductListing() {
                         container
                         spacing={1}>
                         {productStore.productList.map(item =>
-                            <Grid item xs={6} sm={6} md={3} key={productStore.productList.indexOf(item)}>
+                            <Grid item xs={6} sm={6} md={3} key={item.id}>
                                 <Card sx={{ height: 250 }}>
-                                    <CardActionArea>
+                                    <CardActionArea onClick={() => openDetails(item)}>
                                         <CardMedia
                                             sx={{ height: 140 }}
                                             image={item.images[0]}
@@ -94,19 +120,38 @@ function ProductListing() {
                     <List>
                         {
                             productStore.categories.map(item => {
-                                return (<ListItem disablePadding>
-                                    <ListItemButton onClick={() => {
-                                        productStore.getProductByCategory(item);
-                                        setModalOpen(false);
-                                    }}>
-                                        <ListItemText primary={item} />
-                                    </ListItemButton>
-                                </ListItem>);
+                                return (
+                                    <ListItem disablePadding key={item}>
+                                        <ListItemButton onClick={() => {
+                                            productStore.getProductByCategory(item);
+                                            setModalOpen(false);
+                                        }}>
+                                            <ListItemText primary={item} />
+                                        </ListItemButton>
+                                    </ListItem>);
                             })
                         }
                     </List>
                 </Box>
             </Modal>
+
+            <Container sx={{ position: 'sticky', bottom: 70, padding: 0, display: 'flex', justifyContent: 'space-between' }}>
+                <Fab color="primary" aria-label="left" onClick={onLeftclick}>
+                    <KeyboardArrowLeft />
+                </Fab>
+
+                <Fab color="primary" aria-label="right" onClick={onRightclick}>
+                    <KeyboardArrowRight />
+                </Fab>
+            </Container>
+
+            <Snackbar
+                open={snackBarOpen}
+                autoHideDuration={3000}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                onClose={() => setSnackbarOpen(false)}
+                message="No more products"
+            />
         </div >
     );
 }

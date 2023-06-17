@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import HomePage from './pages/home/HomePage';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, RouterProvider, Routes, createBrowserRouter } from 'react-router-dom';
+import ProductDetailPage from './pages/productDetail/ProductDetailPage';
+import MyAppBar from './sharedComponents/MyAppBar';
+import { Container } from '@mui/material';
+import MyCart from './pages/cart/MyCart';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const router = createBrowserRouter([
@@ -12,13 +16,29 @@ const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: "/details",
+    path: "details",
+    element: <ProductDetailPage />
+  },
+  {
+    path: "cart",
+    element: <MyCart />
   }
 ]);
 
 root.render(
   // <React.StrictMode>
-    <RouterProvider router={router} />
+  <div>
+    <Container sx={{ marginTop: 8, marginLeft: 0, marginRight: 0, padding: 0.5 }}>
+      <BrowserRouter>
+        <MyAppBar />
+        <Routes>
+          <Route exact path='/' element={< HomePage />}></Route>
+          <Route exact path='/details' element={< ProductDetailPage />}></Route>
+          <Route exact path='/cart' element={< MyCart />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </Container>
+  </div>
   // </React.StrictMode>
 );
 

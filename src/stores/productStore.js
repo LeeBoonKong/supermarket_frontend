@@ -6,11 +6,14 @@ export const useProductStore = create((set, get) => ({
     productList: [],
     categories: [],
     total: 0,
-    getProducts: async (limit, skip) => {
+    currentPage: 0,
+    getProducts: async (limit, currentPage) => {
+        var skip = currentPage * limit;
         var response = await repo.getProducts(limit, skip);
         set(() => ({
             productList: response.products,
-            total: response.total
+            total: response.total,
+            currentPage: currentPage
         }));
     },
     getProductByCategory: async (category) => {
@@ -20,20 +23,17 @@ export const useProductStore = create((set, get) => ({
             total: response.total
         }));
     },
-    search: (keyword) => {
-
+    search: async (keyword) => {
+        var response = await repo.search(keyword);
+        set(() => ({
+            productList: response.products,
+            total: response.total,
+        }));
     },
     getCategories: async () => {
         var response = await repo.getCategories();
         set(() => ({
             categories: response,
         }));
-        console.log(get().categories);
-    }
-}));
-
-export const useCategoryStore = create((set) => ({
-    categoryList: [],
-    getCategories: () => {
     }
 }));
