@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Add, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import SearchBar from "../../sharedComponents/SearchBar";
+import useUserStore from "../../stores/userStore";
 
 const style = {
     position: 'absolute',
@@ -28,6 +29,7 @@ const style = {
 
 function ProductListing() {
     var productStore = useProductStore();
+    var userStore = useUserStore();
     var navigate = useNavigate();
 
     var [modalOpen, setModalOpen] = useState(false);
@@ -60,6 +62,7 @@ function ProductListing() {
     return (
         <div>
             <Typography variant="h5" textAlign="center">BuyBuyBuy</Typography>
+            {userStore.username === "" ? <div></div> : <Typography variant="body2" textAlign='center'>Welcome, {userStore.username}</Typography>}
             <SearchBar />
             <Box>
                 <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 1 }}>
