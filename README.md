@@ -1,6 +1,4 @@
-# RedsquareFrontend
-For Redsquare frontend Assignment
-
+# Supermarket FrontEnd
 Just run 
 
     npm start
